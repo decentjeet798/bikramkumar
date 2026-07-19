@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bikram Kumar — Creator Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #131018;
+    --bg-soft: #1c1824;
+    --line: #322c3d;
+    --ink: #f2eef7;
+    --ink-dim: #a79fb5;
+    --violet: #a78bfa;
+    --coral: #ff7a59;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  a{ color: inherit; text-decoration: none; }
+
+  ::selection{ background: var(--violet); color: #131018; }
+
+  /* ---------- Timeline scrubber signature ---------- */
+  .scrubber{
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--bg-soft);
+    z-index: 100;
+  }
+  .scrubber-fill{
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--violet), var(--coral));
+    transition: width 0.1s linear;
+  }
+
+  /* ---------- Layout shells ---------- */
+  .wrap{
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  section{ padding: 120px 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type{ border-bottom: none; }
+
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--violet);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .eyebrow::before{
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--coral);
+    box-shadow: 0 0 0 4px rgba(255,122,89,0.15);
+  }
+
+  h1, h2, h3{ font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; }
+
+  /* ---------- Nav ---------- */
+  nav{
+    position: fixed;
+    top: 3px; left: 0; right: 0;
+    z-index: 90;
+    background: rgba(19,16,24,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 64px;
+    padding-top: 0; padding-bottom: 0;
+  }
+  .logo{
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.05em;
+  }
+  .logo span{ color: var(--coral); }
+  .nav-links{ display: flex; gap: 28px; }
+  .nav-links a{
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink-dim);
+    letter-spacing: 0.03em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover{ color: var(--ink); }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 64px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .hero-tag{
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink-dim);
+    margin-bottom: 28px;
+  }
+  .hero-tag b{ color: var(--violet); font-weight: 500; }
+
+  .hero h1{
+    font-size: clamp(48px, 9vw, 108px);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+  .hero h1 .accent{
+    background: linear-gradient(90deg, var(--violet), var(--coral));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-sub{
+    max-width: 560px;
+    font-size: 18px;
+    color: var(--ink-dim);
+    margin-top: 28px;
+  }
+
+  .hero-meta{
+    display: flex;
+    gap: 40px;
+    margin-top: 56px;
+    flex-wrap: wrap;
+  }
+  .hero-meta div{ font-family: var(--font-mono); font-size: 13px; color: var(--ink-dim); }
+  .hero-meta div b{
+    display: block;
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--ink);
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  /* fake timeline strip in hero */
+  .filmstrip{
+    position: absolute;
+    right: 32px;
+    bottom: 60px;
+    display: flex;
+    gap: 6px;
+    opacity: 0.7;
+  }
+  .filmstrip div{
+    width: 34px; height: 46px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: linear-gradient(160deg, rgba(167,139,250,0.15), rgba(255,122,89,0.1));
+  }
+
+  @media (max-width: 720px){ .filmstrip{ display:none; } }
+
+  /* ---------- About ---------- */
+  .about-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+  }
+  .about-grid p{ color: var(--ink-dim); font-size: 16px; margin-bottom: 16px; }
+  .about-grid strong{ color: var(--ink); font-weight: 600; }
+
+  .id-card{
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 28px;
+    background: var(--bg-soft);
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+  .id-card .row{
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--line);
+    color: var(--ink-dim);
+  }
+  .id-card .row:last-child{ border-bottom: none; }
+  .id-card .row span:last-child{ color: var(--ink); }
+
+  @media (max-width: 720px){ .about-grid{ grid-template-columns: 1fr; } }
+
+  /* ---------- Skills ---------- */
+  .track-label{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-dim);
+    width: 90px;
+    flex-shrink: 0;
+  }
+  .track{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+  }
+  .track:last-child{ border-bottom: 1px solid var(--line); }
+
+  .clip{
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 20px;
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .clip:hover{ border-color: var(--violet); transform: translateY(-2px); }
+  .clip h3{ font-size: 16px; font-weight: 600; }
+  .clip span{ font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); }
+
+  /* ---------- Work / Gallery ---------- */
+  .gallery{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 40px;
+  }
+  .frame{
+    aspect-ratio: 4/5;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    padding: 18px;
+  }
+  .frame::before{
+    content: '';
+    position: absolute; inset: 0;
+    opacity: 0.9;
+  }
+  .frame:nth-child(1)::before{ background: radial-gradient(circle at 30% 20%, #a78bfa, #1c1824 70%); }
+  .frame:nth-child(2)::before{ background: radial-gradient(circle at 70% 30%, #ff7a59, #1c1824 70%); }
+  .frame:nth-child(3)::before{ background: radial-gradient(circle at 50% 80%, #6ee7d7, #1c1824 70%); }
+  .frame:nth-child(4)::before{ background: radial-gradient(circle at 20% 70%, #ff7a59, #1c1824 65%); }
+  .frame:nth-child(5)::before{ background: radial-gradient(circle at 80% 20%, #a78bfa, #1c1824 65%); }
+  .frame:nth-child(6)::before{ background: radial-gradient(circle at 40% 40%, #6ee7d7, #1c1824 70%); }
+  .frame-label{
+    position: relative;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: #fff;
+    z-index: 2;
+  }
+  @media (max-width: 720px){ .gallery{ grid-template-columns: repeat(2, 1fr); } }
+
+  .note{
+    margin-top: 28px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-dim);
+  }
+
+  /* ---------- Contact ---------- */
+  .contact-box{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 30px;
+  }
+  .contact-box h2{ font-size: clamp(32px, 5vw, 56px); max-width: 520px; }
+  .contact-links{ display: flex; flex-direction: column; gap: 10px; }
+  .contact-links a{
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--ink-dim);
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .contact-links a:hover{ color: var(--violet); border-color: var(--violet); }
+
+  footer{
+    padding: 32px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-dim);
+  }
+
+  /* reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    .clip{ transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scrubber"><div class="scrubber-fill" id="scrubFill"></div></div>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">BK<span>_</span>REEL</div>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#work">Work</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-tag">▶ &nbsp;<b>Now playing</b> — Portfolio Reel, Bikram Kumar</div>
+    <h1>Bikram<br>Kumar<span class="accent">.</span></h1>
+    <p class="hero-sub">A student creator turning ideas into frames — blending hand-drawn art with AI-assisted video, one story at a time.</p>
+    <div class="hero-meta">
+      <div>Grade<b>Class 9A</b></div>
+      <div>School<b>Gandhi Memorial, Ramgarh</b></div>
+      <div>Focus<b>AI Video · Art</b></div>
+    </div>
+    <div class="filmstrip">
+      <div></div><div></div><div></div><div></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="eyebrow">ABOUT</div>
+    <div class="about-grid">
+      <div>
+        <p>I'm <strong>Bikram Kumar</strong>, a Class 9A student at <strong>Gandhi Memorial Ramgarh</strong>. I spend most of my free time sketching, painting, and experimenting with AI tools to bring stories to life on screen.</p>
+        <p>I'm drawn to the space where <strong>traditional art</strong> meets <strong>new technology</strong> — using AI as a creative partner, not a shortcut, to build videos that still carry a hand-made feel.</p>
+      </div>
+      <div class="id-card">
+        <div class="row"><span>NAME</span><span>Bikram Kumar</span></div>
+        <div class="row"><span>CLASS</span><span>9 A</span></div>
+        <div class="row"><span>SCHOOL</span><span>Gandhi Memorial, Ramgarh</span></div>
+        <div class="row"><span>STATUS</span><span>Open to small projects</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="eyebrow">SKILLS</div>
+    <h2 style="font-size: clamp(28px,4vw,42px); margin-bottom: 20px;">What I create with</h2>
+
+    <div class="track">
+      <div class="track-label">CORE</div>
+      <div class="clip"><h3>Creative AI Video Making</h3><span>AI-ASSISTED</span></div>
+    </div>
+    <div class="track">
+      <div class="track-label">CORE</div>
+      <div class="clip"><h3>Artist — Drawing &amp; Painting</h3><span>TRADITIONAL</span></div>
+    </div>
+    <div class="track">
+      <div class="track-label">ALSO</div>
+      <div class="clip"><h3>Visual Storytelling</h3><span>NARRATIVE</span></div>
+    </div>
+    <div class="track">
+      <div class="track-label">ALSO</div>
+      <div class="clip"><h3>Video Editing &amp; Effects</h3><span>POST-PROD</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="wrap">
+    <div class="eyebrow">SELECTED WORK</div>
+    <h2 style="font-size: clamp(28px,4vw,42px);">Frames from the reel</h2>
+    <div class="gallery">
+      <div class="frame"><span class="frame-label">AI Video / 01</span></div>
+      <div class="frame"><span class="frame-label">Painting / 02</span></div>
+      <div class="frame"><span class="frame-label">Sketch / 03</span></div>
+      <div class="frame"><span class="frame-label">AI Video / 04</span></div>
+      <div class="frame"><span class="frame-label">Digital Art / 05</span></div>
+      <div class="frame"><span class="frame-label">Concept / 06</span></div>
+    </div>
+    <p class="note">These are placeholder frames — swap them for real project images or video thumbnails once ready.</p>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap contact-box">
+    <h2>Let's create<br>something together.</h2>
+    <div class="contact-links">
+      <a href="mailto:bikramkumar2012@gmail.com">bikramkumar2012@gmail.com</a>
+      <a href="#">Instagram — add link</a>
+      <a href="#">YouTube — add link</a>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 Bikram Kumar — Built frame by frame.</footer>
+
+<script>
+  window.addEventListener('scroll', function(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = h > 0 ? (window.scrollY / h) * 100 : 0;
+    document.getElementById('scrubFill').style.width = pct + '%';
+  });
+</script>
+
+</body>
+</html>
